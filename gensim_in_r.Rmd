@@ -59,7 +59,7 @@ txt_to_use <- (str_split(txt_to_use, " "))
 ```
 
 
-# Creating `Word2vec`
+# Creating Word2vec
 
 In python, unlike `R`, we create the model we want to run *before* we run it, supplying it with the various parameters it will take. We'll create an object called `basemodel`, which uses the skip-gram w/negative sampling implementation of *word2vec*. We'll use a window size of 5, considering words within five words of each side of a target word. We'll do 3 sweeps through the data, but in practice, you should do more. We'll tell gensim to use skipgram "`sg`" with negative sampling "`ns`", rather than the hierarchical softmax. Finally, we'll use a dimensionality of 25, for the embedding dimensions, but again, in practice, you should probably use more.
 

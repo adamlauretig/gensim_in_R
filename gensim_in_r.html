@@ -134,7 +134,7 @@ $(document).ready(function () {
 <p>at the terminal.</p>
 <p>I assume you are using recent versions of R, and RStudio. To install thereticulate package from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;reticulate&quot;)</code></pre>
-<p>We’ll also use thequanteda andstringr packages, to install them:</p>
+<p>We’ll also use the quanteda and stringr packages, to install them:</p>
 <pre class="r"><code>install.packages(c(&quot;quanteda&quot;, &quot;stringr&quot;))</code></pre>
 </div>
 <div id="loading-gensim" class="section level1">
@@ -165,7 +165,7 @@ txt_to_use &lt;- stringr::str_replace_all(txt_to_use, &quot;\n&quot;, &quot; &qu
 txt_to_use &lt;- (str_split(txt_to_use, &quot; &quot;))</code></pre>
 </div>
 <div id="creating-word2vec" class="section level1">
-<h1>Creating <code>Word2vec</code></h1>
+<h1>Creating Word2vec</h1>
 <p>In python, unlike <code>R</code>, we create the model we want to run <em>before</em> we run it, supplying it with the various parameters it will take. We’ll create an object called <code>basemodel</code>, which uses the skip-gram w/negative sampling implementation of <em>word2vec</em>. We’ll use a window size of 5, considering words within five words of each side of a target word. We’ll do 3 sweeps through the data, but in practice, you should do more. We’ll tell gensim to use skipgram “<code>sg</code>” with negative sampling “<code>ns</code>”, rather than the hierarchical softmax. Finally, we’ll use a dimensionality of 25, for the embedding dimensions, but again, in practice, you should probably use more.</p>
 <pre class="r"><code>basemodel = Word2Vec(
     workers = 1, # using 1 core
@@ -190,11 +190,11 @@ basemodel$train(
 <h1>Examining the Results</h1>
 <p>We can examine the output from the model, this will produce a vector 25 long. This, however, is not particularly informative.</p>
 <pre class="r"><code>basemodel$wv$word_vec(&quot;united&quot;)</code></pre>
-<pre><code>##  [1]  0.254694760 -0.187733620  0.140934110  0.030917393 -0.025031764
-##  [6]  0.149219558 -0.164426580 -0.175517008 -0.087618195  0.186294258
-## [11] -0.445519477 -0.394197494 -0.004848184 -0.210431635 -0.086628601
-## [16] -0.282858461  0.106881693 -0.031084137  0.199254364 -0.135322824
-## [21] -0.043788109 -0.340746999  0.216228306  0.182460517 -0.422849417</code></pre>
+<pre><code>##  [1] -0.13792789 -0.14075008 -0.26430067  0.12714376  0.33211195
+##  [6] -0.27082554 -0.20537451 -0.19446106 -0.20087996 -0.18056946
+## [11]  0.10017164  0.15922432  0.27023333 -0.19707973 -0.27242309
+## [16]  0.31791416  0.46352085  0.03108245 -0.08047508 -0.03991620
+## [21] -0.28844911 -0.06030827  0.15230447 -0.07441488  0.28543684</code></pre>
 <p>But that isn’t particularly informative. Instead, thanks to <code>reticulate</code>’s ability to communicate between <code>R</code> and python, we can bring the vectors into R, and then calculate cosine distance (a measure of word similarity).</p>
 <pre class="r"><code>library(Matrix)
 embeds &lt;- basemodel$wv$syn0
@@ -216,21 +216,21 @@ closest_vector &lt;- function(vec1, mat1){
 }
   
 closest_vector(embeds[&quot;united&quot;, ], embeds)</code></pre>
-<pre><code>##       united constitution        union           of       states 
-##    1.0000000    0.9493524    0.9301439    0.9029469    0.8800227 
-##     exercise     congress      several   government          the 
-##    0.8750274    0.8558955    0.8444712    0.8444018    0.8412739</code></pre>
+<pre><code>##       united constitution    executive        union          the 
+##    1.0000000    0.9443247    0.9018565    0.8977207    0.8939441 
+##      several     exercise           of       states   government 
+##    0.8909967    0.8830832    0.8808135    0.8667734    0.8429944</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;united&quot;, ] + embeds[&quot;states&quot;, ], embeds)</code></pre>
 <pre><code>##       states       united constitution           of        union 
-##    0.9727215    0.9661898    0.9596846    0.9349946    0.9092829 
-##     exercise          the          and    executive   government 
-##    0.8981740    0.8491971    0.8449199    0.8378823    0.8302572</code></pre>
+##    0.9705966    0.9613309    0.9521154    0.8992534    0.8915463 
+##          the    executive     exercise      several          and 
+##    0.8829238    0.8824634    0.8690314    0.8451459    0.8200310</code></pre>
 <p>This result isn’t bad, for such a small corpus, with relatively few vectors. We can even do more complicated vector arithmetic:</p>
 <pre class="r"><code>closest_vector(embeds[&quot;american&quot;, ] - embeds[&quot;war&quot;, ], embeds)</code></pre>
-<pre><code>##    anxious  instances      grows     speaks     stable  conscious 
-##  0.5578554  0.5030443  0.4763585  0.4636805  0.4489834  0.4437980 
-##    collect management    defects  slightest 
-##  0.4377161  0.4135457  0.3982065  0.3927581</code></pre>
+<pre><code>##      abuses          of    columbia      bodies   pecuniary suggestions 
+##   0.5853968   0.5147557   0.4977228   0.4847222   0.4795834   0.4660352 
+##  respecting     negroes    valuable   factories 
+##   0.4437863   0.4415520   0.4409474   0.4359323</code></pre>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
