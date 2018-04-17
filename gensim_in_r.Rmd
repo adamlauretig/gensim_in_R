@@ -26,7 +26,7 @@ I assume you are using recent versions of R, and RStudio. To install thereticula
 install.packages("reticulate")
 ```
 
-We'll also use thequanteda andstringr packages, to install them:
+We'll also use the quanteda and stringr packages, to install them:
 ```{r, eval = FALSE}
 install.packages(c("quanteda", "stringr"))
 ```
