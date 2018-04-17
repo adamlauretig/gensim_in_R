@@ -11,32 +11,29 @@ knitr::opts_chunk$set(echo = TRUE)
 
 # Introduction
 
-Gensim[^1] is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed \texttt{reticulate}[^2] package provides a solution for the R user who wants to dip their toes in, without learning Python.  It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth. In this document, I will show how to install `gensim`, call it from `reticulate`, estimate word embeddings, and perform vector arithmetic.
-
-[^1]: [https://radimrehurek.com/gensim/]
-[^2]: [https://cran.r-project.org/web/packages/reticulate/index.html]
+[Gensim](https://radimrehurek.com/gensim/) is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed [reticulate](https://cran.r-project.org/web/packages/reticulate/index.html) package provides a solution for the R user who wants to dip their toes in, without learning Python.  It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth. In this document, I will show how to install `gensim`, call it from `reticulate`, estimate word embeddings, and perform vector arithmetic.
 
 # Setup
 
-I use Python 3.6, as distributed with Anaconda[^3], and once Anaconda is installed, I install Gensim at the command line, using \texttt{pip}. To do this, I type 
+I use Python 3.6, as distributed with [Anaconda](https://www.anaconda.com/download/#macos), and once Anaconda is installed, I install Gensim at the command line, using pip. To do this, I type 
 ```{bash, eval = FALSE}
 pip install gensim
 ```
 at the terminal.
 
-I assume you are using recent versions of R ($ > \text{v} 3.4.0$), and RStudio. To install the \texttt{reticulate} package from CRAN:
+I assume you are using recent versions of R, and RStudio. To install thereticulate package from CRAN:
 ```{r, eval = FALSE}
 install.packages("reticulate")
 ```
 
-We'll also use the \texttt{quanteda} and \texttt{stringr} packages, to install them:
+We'll also use thequanteda andstringr packages, to install them:
 ```{r, eval = FALSE}
 install.packages(c("quanteda", "stringr"))
 ```
 
 # Loading Gensim
 
-Importing Gensim with \texttt{reticulate} is very similar to loading an R package more generally:
+Importing Gensim with reticulate is very similar to loading an R package more generally:
 ```{r, eval = TRUE}
 library(reticulate)
 gensim <- import("gensim") # import the gensim library
@@ -141,5 +138,3 @@ closest_vector(embeds["american", ] - embeds["war", ], embeds)
 # Conclusion
 
 Overall, this is an introduction to `reticulate`, and to estimating word embeddings with gensim. I showed how to prep text, estimate embeddings, and perform vector arithmetic on these embeddings.
-
-[^3]: [https://www.anaconda.com/download/#macos]

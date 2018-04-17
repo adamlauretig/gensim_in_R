@@ -125,21 +125,21 @@ $(document).ready(function () {
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>Gensim<a href="#fn1" class="footnoteRef" id="fnref1"><sup>1</sup></a> is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed <a href="#fn2" class="footnoteRef" id="fnref2"><sup>2</sup></a> package provides a solution for the R user who wants to dip their toes in, without learning Python. It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth. In this document, I will show how to install <code>gensim</code>, call it from <code>reticulate</code>, estimate word embeddings, and perform vector arithmetic.</p>
+<p><a href="https://radimrehurek.com/gensim/">Gensim</a> is a powerful Python library for text modeling. It incorporates a variety of models, many of which are not available in R. However, the recently developed <a href="https://cran.r-project.org/web/packages/reticulate/index.html">reticulate</a> package provides a solution for the R user who wants to dip their toes in, without learning Python. It allows the user to call Python code which behaves like R code, and to seamlessly pass R and Python objects back and forth. In this document, I will show how to install <code>gensim</code>, call it from <code>reticulate</code>, estimate word embeddings, and perform vector arithmetic.</p>
 </div>
 <div id="setup" class="section level1">
 <h1>Setup</h1>
-<p>I use Python 3.6, as distributed with Anaconda<a href="#fn3" class="footnoteRef" id="fnref3"><sup>3</sup></a>, and once Anaconda is installed, I install Gensim at the command line, using . To do this, I type</p>
+<p>I use Python 3.6, as distributed with <a href="https://www.anaconda.com/download/#macos">Anaconda</a>, and once Anaconda is installed, I install Gensim at the command line, using pip. To do this, I type</p>
 <pre class="bash"><code>pip install gensim</code></pre>
 <p>at the terminal.</p>
-<p>I assume you are using recent versions of R ($ &gt;  3.4.0$), and RStudio. To install the  package from CRAN:</p>
+<p>I assume you are using recent versions of R, and RStudio. To install thereticulate package from CRAN:</p>
 <pre class="r"><code>install.packages(&quot;reticulate&quot;)</code></pre>
-<p>We’ll also use the  and  packages, to install them:</p>
+<p>We’ll also use thequanteda andstringr packages, to install them:</p>
 <pre class="r"><code>install.packages(c(&quot;quanteda&quot;, &quot;stringr&quot;))</code></pre>
 </div>
 <div id="loading-gensim" class="section level1">
 <h1>Loading Gensim</h1>
-<p>Importing Gensim with  is very similar to loading an R package more generally:</p>
+<p>Importing Gensim with reticulate is very similar to loading an R package more generally:</p>
 <pre class="r"><code>library(reticulate)
 gensim &lt;- import(&quot;gensim&quot;) # import the gensim library
 Word2Vec &lt;- gensim$models$Word2Vec # Extract the Word2Vec model
@@ -190,11 +190,11 @@ basemodel$train(
 <h1>Examining the Results</h1>
 <p>We can examine the output from the model, this will produce a vector 25 long. This, however, is not particularly informative.</p>
 <pre class="r"><code>basemodel$wv$word_vec(&quot;united&quot;)</code></pre>
-<pre><code>##  [1]  0.079545833 -0.180381909 -0.098730028 -0.272396535  0.059285931
-##  [6] -0.065721489  0.137484446  0.234247461  0.164245531 -0.107940271
-## [11]  0.310590237 -0.127424330 -0.056505825  0.016430136  0.426125497
-## [16]  0.003732756 -0.132569298  0.436235547 -0.003730101  0.129724070
-## [21] -0.245062083  0.223883718 -0.336706549 -0.138887778  0.069564238</code></pre>
+<pre><code>##  [1]  0.254694760 -0.187733620  0.140934110  0.030917393 -0.025031764
+##  [6]  0.149219558 -0.164426580 -0.175517008 -0.087618195  0.186294258
+## [11] -0.445519477 -0.394197494 -0.004848184 -0.210431635 -0.086628601
+## [16] -0.282858461  0.106881693 -0.031084137  0.199254364 -0.135322824
+## [21] -0.043788109 -0.340746999  0.216228306  0.182460517 -0.422849417</code></pre>
 <p>But that isn’t particularly informative. Instead, thanks to <code>reticulate</code>’s ability to communicate between <code>R</code> and python, we can bring the vectors into R, and then calculate cosine distance (a measure of word similarity).</p>
 <pre class="r"><code>library(Matrix)
 embeds &lt;- basemodel$wv$syn0
@@ -216,33 +216,25 @@ closest_vector &lt;- function(vec1, mat1){
 }
   
 closest_vector(embeds[&quot;united&quot;, ], embeds)</code></pre>
-<pre><code>##       united constitution        union           of      several 
-##    1.0000000    0.9347044    0.9138149    0.8565964    0.8552976 
-##    executive       people        world          and        great 
-##    0.8412900    0.8059754    0.8034110    0.8021632    0.8012630</code></pre>
+<pre><code>##       united constitution        union           of       states 
+##    1.0000000    0.9493524    0.9301439    0.9029469    0.8800227 
+##     exercise     congress      several   government          the 
+##    0.8750274    0.8558955    0.8444712    0.8444018    0.8412739</code></pre>
 <pre class="r"><code>closest_vector(embeds[&quot;united&quot;, ] + embeds[&quot;states&quot;, ], embeds)</code></pre>
-<pre><code>##       states constitution       united           of        union 
-##    0.9511864    0.9498583    0.9445358    0.9415047    0.8955696 
-##    executive          and     exercise          the      several 
-##    0.8770096    0.8621433    0.8493146    0.8455629    0.8360291</code></pre>
+<pre><code>##       states       united constitution           of        union 
+##    0.9727215    0.9661898    0.9596846    0.9349946    0.9092829 
+##     exercise          the          and    executive   government 
+##    0.8981740    0.8491971    0.8449199    0.8378823    0.8302572</code></pre>
 <p>This result isn’t bad, for such a small corpus, with relatively few vectors. We can even do more complicated vector arithmetic:</p>
 <pre class="r"><code>closest_vector(embeds[&quot;american&quot;, ] - embeds[&quot;war&quot;, ], embeds)</code></pre>
-<pre><code>## corresponding        fabric       suppose        freely       precise 
-##     0.6505375     0.6389905     0.4884222     0.4751625     0.4640567 
-##     fraternal       leading     servitude       adverse        entire 
-##     0.4566921     0.4525996     0.4413166     0.4388614     0.4367608</code></pre>
+<pre><code>##    anxious  instances      grows     speaks     stable  conscious 
+##  0.5578554  0.5030443  0.4763585  0.4636805  0.4489834  0.4437980 
+##    collect management    defects  slightest 
+##  0.4377161  0.4135457  0.3982065  0.3927581</code></pre>
 </div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
 <p>Overall, this is an introduction to <code>reticulate</code>, and to estimating word embeddings with gensim. I showed how to prep text, estimate embeddings, and perform vector arithmetic on these embeddings.</p>
-</div>
-<div class="footnotes">
-<hr />
-<ol>
-<li id="fn1"><p>[<a href="https://radimrehurek.com/gensim/" class="uri">https://radimrehurek.com/gensim/</a>]<a href="#fnref1">↩</a></p></li>
-<li id="fn2"><p>[<a href="https://cran.r-project.org/web/packages/reticulate/index.html" class="uri">https://cran.r-project.org/web/packages/reticulate/index.html</a>]<a href="#fnref2">↩</a></p></li>
-<li id="fn3"><p>[<a href="https://www.anaconda.com/download/#macos" class="uri">https://www.anaconda.com/download/#macos</a>]<a href="#fnref3">↩</a></p></li>
-</ol>
 </div>
 
 
